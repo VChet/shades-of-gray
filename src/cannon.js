@@ -37,13 +37,6 @@ export class Cannon {
     }
   }
 
-  getShootSpeed(radius, height, friction) {
-    const distanceToTop = this.y - radius;
-    const distanceToCenter = height / 2 - radius;
-    const targetDistance = distanceToTop + distanceToCenter;
-    return Math.sqrt(2 * friction * targetDistance);
-  }
-
   setNextBall(level) {
     this.ballLevel = level;
   }

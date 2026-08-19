@@ -1,5 +1,7 @@
 import { getBallColor } from "./helpers/color.js";
 
+const GROWTH_SPEED = 100;
+
 export class Ball {
   constructor(ctx, x, y, angle, speed, radius, level) {
     this.ctx = ctx;
@@ -115,9 +117,9 @@ export class Ball {
     this.vy *= factor;
   }
 
-  grow(growthSpeed, deltaTime, maxRadius) {
+  grow(deltaTime, maxRadius) {
     this.radius = Math.min(
-      this.radius + growthSpeed * deltaTime,
+      this.radius + GROWTH_SPEED * deltaTime,
       maxRadius
     );
 

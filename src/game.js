@@ -3,8 +3,7 @@ import { Cannon } from "./cannon.js";
 import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
 
 const RADIUS = 5;
-const FRICTION = 100;
-const GROWTH_SPEED = 100;
+const INITIAL_SPEED = 300;
 const MAX_BALL_LEVEL = 5;
 
 function randomBallLevel() {
@@ -28,6 +27,13 @@ export class Game {
     this.canvas.addEventListener("pointerdown", this.shoot);
   }
 
+  getFriction() {
+    const distanceToTop = this.cannon.y - RADIUS;
+    const distanceToCenter = GAME_HEIGHT / 2 - RADIUS;
+    const targetDistance = distanceToTop + distanceToCenter;
+    return INITIAL_SPEED ** 2 / (targetDistance * 2);
+  }
+
   updateFlyingBall(deltaTime) {
     const ball = this.balls.at(-1);
     ball.setPosition(deltaTime);
@@ -40,7 +46,7 @@ export class Game {
       this.destroyedBalls += 1;
     }
 
-    ball.setVelocity(FRICTION, deltaTime);
+    ball.setVelocity(this.getFriction(), deltaTime);
 
     if (ball.isStopped()) {
       ball.vx = 0;
@@ -58,7 +64,7 @@ export class Game {
       return;
     }
 
-    const finished = ball.grow(GROWTH_SPEED, deltaTime, maxRadius);
+    const finished = ball.grow(deltaTime, maxRadius);
     if (finished) this.state = "aiming";
   }
 
@@ -88,13 +94,12 @@ export class Game {
     if (this.state !== "aiming") return;
     this.state = "flying";
 
-    const speed = this.cannon.getShootSpeed(RADIUS, GAME_HEIGHT, FRICTION);
     const ball = new Ball(
       this.ctx,
       this.cannon.x,
       this.cannon.y,
       this.cannon.getShootAngle(),
-      speed,
+      INITIAL_SPEED,
       RADIUS,
       this.nextBallLevel
     );
