@@ -137,4 +137,29 @@ export class Ball {
     this.level -= 1;
     return false;
   }
+
+  toSnapshot() {
+    return {
+      x: this.x,
+      y: this.y,
+      vx: this.vx,
+      vy: this.vy,
+      radius: this.radius,
+      level: this.level
+    };
+  }
+
+  static fromSnapshot(ctx, data) {
+    const ball = new Ball(
+      ctx,
+      data.x, data.y,
+      0, 0,
+      data.radius,
+      data.level
+    );
+    ball.vx = data.vx;
+    ball.vy = data.vy;
+
+    return ball;
+  }
 }

@@ -16,3 +16,7 @@ export function readValue(key, defaultValue) {
 export function writeValue(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+export function removeValue(key) {
+  localStorage.removeItem(key);
+}

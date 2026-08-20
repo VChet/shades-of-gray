@@ -1,6 +1,7 @@
 import { Ball } from "./ball.js";
 import { Cannon } from "./cannon.js";
 import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
+import { readValue, removeValue, writeValue } from "./helpers/storage.js";
 import { addRecord, getBestScore } from "./leaderboard.js";
 import { playSound } from "./sound.js";
 
@@ -30,11 +31,16 @@ export class Game {
     this.updateStats();
 
     this.cannon = new Cannon(ctx);
-
     this.balls = [];
-    this.nextBallLevel = randomBallLevel();
-    this.cannon.setNextBall(this.nextBallLevel);
+
+    const restored = this.restoreSnapshot();
+    if (!restored) {
+      this.nextBallLevel = randomBallLevel();
+      this.cannon.setNextBall(this.nextBallLevel);
+    }
+
     this.canvas.addEventListener("pointerdown", this.shoot);
+    window.addEventListener("pagehide", this.saveSnapshot);
   }
 
   getFriction() {
@@ -157,6 +163,37 @@ export class Game {
 
   resume() {
     this.paused = false;
+  }
+
+  saveSnapshot = () => {
+    if (this.score === 0) {
+      removeValue("game-state");
+      return;
+    }
+
+    writeValue("game-state", {
+      score: this.score,
+      state: this.state,
+      nextBallLevel: this.nextBallLevel,
+      balls: this.balls.map((ball) => ball.toSnapshot())
+    });
+  };
+
+  restoreSnapshot() {
+    const snapshot = readValue("game-state", null);
+    if (!snapshot) return false;
+
+    this.score = snapshot.score;
+    this.state = snapshot.state;
+    this.nextBallLevel = snapshot.nextBallLevel;
+    this.balls = snapshot.balls.map((data) => Ball.fromSnapshot(this.ctx, data));
+
+    this.cannon.setNextBall(this.nextBallLevel);
+
+    removeValue("game-state");
+    this.updateStats();
+
+    return true;
   }
 
   loop = (time) => {
