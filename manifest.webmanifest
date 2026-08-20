@@ -1,0 +1,24 @@
+{
+  "name": "Shades of Gray",
+  "short_name": "Shades of Gray",
+  "id": "shades-of-gray",
+  "description": "Play Shades of Gray, a minimalist arcade game where you shoot, bounce, and grow gray balls while chasing your high score.",
+
+  "lang": "en",
+  "dir": "ltr",
+
+  "start_url": "/",
+  "scope": "/",
+
+  "display": "standalone",
+  "orientation": "portrait",
+
+  "background_color": "#111",
+  "theme_color": "#111",
+
+  "icons": [
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/icon-mask.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}
