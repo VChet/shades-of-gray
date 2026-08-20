@@ -13,22 +13,30 @@
       <canvas id="game"></canvas>
       <section id="panel">
         <button type="button" id="menu">⚙️</button>
-        <div>Shots: <span id="shots">0</span></div>
-        <div>Destroyed: <span id="destroyed">0</span></div>
-        <div>On screen: <span id="on-screen">0</span></div>
+        <div>Score: <span id="score">0</span></div>
+        <div>Last: <span id="last">0</span></div>
+        <div>Best: <span id="best">0</span></div>
       </section>
 
       <dialog id="menu-dialog">
-        <button type="button" id="close">✖</button>
-
+        <h2>Shades of Gray</h2>
         <nav>
           <button type="button" id="new-game">New Game</button>
-          <button type="button" id="leaderboard" disabled>Leaderboard</button>
-          <button type="button" id="terms-of-use" disabled>Terms of Use</button>
-          <button type="button" id="privacy-policy" disabled>Privacy Policy</button>
+          <button type="button" id="leaderboard">Leaderboard</button>
           <button type="button" id="hot-seat" disabled>Hot Seat</button>
           <button type="button" id="online" disabled>Online</button>
+          <button type="button" id="terms-of-use" disabled>Terms of Use</button>
+          <button type="button" id="privacy-policy" disabled>Privacy Policy</button>
+          <button type="button" data-close>Close</button>
         </nav>
+      </dialog>
+
+      <dialog id="leaderboard-dialog">
+        <h2>Leaderboard</h2>
+        <div>
+          <ol id="leaderboard-list"></ol>
+          <button type="button" data-close>Close</button>
+        </div>
       </dialog>
     </main>
 

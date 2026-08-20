@@ -21,9 +21,17 @@ body {
   font-weight: normal;
   color: var(--white);
 }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  scrollbar-color: var(--base-aside) var(--background);
+  scrollbar-width: thin;
+}
 dialog {
-  position: relative;
-  padding: 3rem 2rem 2rem;
+  padding: 0;
+  margin: revert;
   color: inherit;
   background: var(--background);
   border: 1px solid var(--border);
@@ -31,15 +39,22 @@ dialog {
   &::backdrop {
     background: rgb(0 0 0 / 50%);
   }
-  #close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0.5rem;
+  > * {
+    padding: 1rem 2rem;
+    &:not(h2) {
+      display: grid;
+      gap: 1rem;
+    }
   }
-  nav {
-    display: grid;
-    gap: 1rem;
+  h2 {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: center;
+    background: inherit;
+    border-bottom: 1px solid var(--border);
   }
 }
 button, select {
@@ -77,6 +92,7 @@ button {
   align-items: center;
   padding: 1rem;
   white-space: nowrap;
+  mix-blend-mode: difference;
   transform: translateX(-50%);
   @media (aspect-ratio >= 4/3) {
     top: 50%;

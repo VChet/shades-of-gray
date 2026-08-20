@@ -1,6 +1,7 @@
 import { Ball } from "./ball.js";
 import { Cannon } from "./cannon.js";
 import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
+import { addRecord, getBestScore } from "./leaderboard.js";
 
 const RADIUS = 5;
 const INITIAL_SPEED = 300;
@@ -19,11 +20,13 @@ export class Game {
     this.paused = false;
     this.state = "aiming";
     this.statsDom = {
-      shots: document.querySelector("#shots"),
-      destroyed: document.querySelector("#destroyed"),
-      onScreen: document.querySelector("#on-screen")
+      score: document.querySelector("#score"),
+      last: document.querySelector("#last"),
+      best: document.querySelector("#best")
     };
-    this.stats = { shots: 0, destroyed: 0 };
+    this.last = 0;
+    this.score = 0;
+    this.updateStats();
 
     this.cannon = new Cannon(ctx);
 
@@ -41,22 +44,22 @@ export class Game {
   }
 
   updateStats() {
-    this.statsDom.shots.textContent = this.stats.shots;
-    this.statsDom.destroyed.textContent = this.stats.destroyed;
-    this.statsDom.onScreen.textContent = this.balls.length;
+    this.statsDom.score.textContent = this.score;
+    this.statsDom.last.textContent = this.last;
+    this.statsDom.best.textContent = getBestScore();
   }
 
   updateFlyingBall(deltaTime) {
     const ball = this.balls.at(-1);
     ball.setPosition(deltaTime);
-    if (ball.isOutOfBounds(GAME_HEIGHT)) return this.reset();
+    if (ball.isOutOfBounds(GAME_HEIGHT)) return this.gameOver();
     ball.bounce(GAME_WIDTH);
 
     const hitBall = ball.bounceFromOthers(this.balls);
-    if (hitBall?.hit()) {
-      this.balls.splice(this.balls.indexOf(hitBall), 1);
-      this.stats.destroyed += 1;
+    if (hitBall) {
+      this.score += 1;
       this.updateStats();
+      if (hitBall.hit()) this.balls.splice(this.balls.indexOf(hitBall), 1);
     }
 
     ball.setVelocity(this.getFriction(), deltaTime);
@@ -89,10 +92,16 @@ export class Game {
     else if (this.state === "growing") this.updateGrowingBall(deltaTime);
   }
 
+  gameOver() {
+    addRecord(this.score);
+    this.last = this.score;
+    this.reset();
+  }
+
   reset() {
     this.balls = [];
     this.state = "aiming";
-    this.stats = { shots: 0, destroyed: 0 };
+    this.score = 0;
     this.updateStats();
   }
 
@@ -120,7 +129,7 @@ export class Game {
       this.nextBallLevel
     );
     this.balls.push(ball);
-    this.stats.shots += 1;
+    this.score += 1;
     this.updateStats();
 
     this.nextBallLevel = randomBallLevel();
