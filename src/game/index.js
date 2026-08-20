@@ -2,6 +2,7 @@ import { Ball } from "./ball.js";
 import { Cannon } from "./cannon.js";
 import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
 import { addRecord, getBestScore } from "./leaderboard.js";
+import { playSound } from "./sound.js";
 
 const RADIUS = 5;
 const INITIAL_SPEED = 300;
@@ -53,13 +54,16 @@ export class Game {
     const ball = this.balls.at(-1);
     ball.setPosition(deltaTime);
     if (ball.isOutOfBounds(GAME_HEIGHT)) return this.gameOver();
-    ball.bounce(GAME_WIDTH);
+    const isBounced = ball.bounce(GAME_WIDTH);
+    if (isBounced) playSound("bounce");
 
     const hitBall = ball.bounceFromOthers(this.balls);
     if (hitBall) {
       this.score += 1;
       this.updateStats();
-      if (hitBall.hit()) this.balls.splice(this.balls.indexOf(hitBall), 1);
+      const isDestroyed = hitBall.hit();
+      playSound(isDestroyed ? "destroy" : "hit");
+      if (isDestroyed) this.balls.splice(this.balls.indexOf(hitBall), 1);
     }
 
     ball.setVelocity(this.getFriction(), deltaTime);
@@ -67,6 +71,7 @@ export class Game {
     if (ball.isStopped()) {
       ball.vx = 0;
       ball.vy = 0;
+      playSound("growStart");
       this.state = "growing";
     }
   }
@@ -77,11 +82,15 @@ export class Game {
     if (maxRadius === null) {
       this.balls.pop();
       this.state = "aiming";
+      playSound("cannonZone");
       return;
     }
 
     const finished = ball.grow(deltaTime, maxRadius);
-    if (finished) this.state = "aiming";
+    if (finished) {
+      playSound("growEnd");
+      this.state = "aiming";
+    }
   }
 
   update(deltaTime) {
@@ -93,6 +102,7 @@ export class Game {
   }
 
   gameOver() {
+    playSound("gameOver");
     addRecord(this.score);
     this.last = this.score;
     this.reset();
@@ -130,6 +140,7 @@ export class Game {
     );
     this.balls.push(ball);
     this.score += 1;
+    playSound("shoot");
     this.updateStats();
 
     this.nextBallLevel = randomBallLevel();

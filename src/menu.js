@@ -1,4 +1,5 @@
 import { renderLeaderboard } from "./game/leaderboard.js";
+import { isSoundEnabled, toggleSound } from "./game/sound.js";
 
 export function createMenu(game) {
   function setupDialog(dialogSelector) {
@@ -23,13 +24,17 @@ export function createMenu(game) {
     menuDialog.showModal();
   });
 
-  const newGameButton = document.querySelector("#new-game");
+  const soundToggle = menuDialog.querySelector("#sound");
+  soundToggle.checked = isSoundEnabled();
+  soundToggle.addEventListener("change", () => { toggleSound(); });
+
+  const newGameButton = menuDialog.querySelector("#new-game");
   newGameButton.addEventListener("click", () => {
     game.reset();
     menuDialog.close();
   });
   // Leaderboard
-  const leaderboardButton = document.querySelector("#leaderboard");
+  const leaderboardButton = menuDialog.querySelector("#leaderboard");
   const leaderboardList = leaderboardDialog.querySelector("#leaderboard-list");
 
   leaderboardButton.addEventListener("click", () => {

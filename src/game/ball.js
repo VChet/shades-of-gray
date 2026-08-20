@@ -32,17 +32,22 @@ export class Ball {
     if (this.x - this.radius <= 0) {
       this.x = this.radius;
       this.vx = Math.abs(this.vx);
+      return true;
     }
 
     if (this.x + this.radius >= width) {
       this.x = width - this.radius;
       this.vx = -Math.abs(this.vx);
+      return true;
     }
 
     if (this.y - this.radius <= 0) {
       this.y = this.radius;
       this.vy = Math.abs(this.vy);
+      return true;
     }
+
+    return false;
   }
 
   isOutOfBounds(height) {
