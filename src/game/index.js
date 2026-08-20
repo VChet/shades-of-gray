@@ -16,6 +16,7 @@ export class Game {
     this.ctx = ctx;
     this.previousTime = performance.now();
 
+    this.paused = false;
     this.state = "aiming";
     this.statsDom = {
       shots: document.querySelector("#shots"),
@@ -81,6 +82,8 @@ export class Game {
   }
 
   update(deltaTime) {
+    if (this.paused) return;
+
     if (this.state === "aiming") this.cannon.update(deltaTime);
     else if (this.state === "flying") this.updateFlyingBall(deltaTime);
     else if (this.state === "growing") this.updateGrowingBall(deltaTime);
@@ -126,6 +129,14 @@ export class Game {
 
   start() {
     requestAnimationFrame(this.loop);
+  }
+
+  pause() {
+    this.paused = true;
+  }
+
+  resume() {
+    this.paused = false;
   }
 
   loop = (time) => {

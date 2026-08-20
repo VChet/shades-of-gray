@@ -11,11 +11,25 @@
   <body>
     <main>
       <canvas id="game"></canvas>
-      <section id="stats">
+      <section id="panel">
+        <button type="button" id="menu">⚙️</button>
         <div>Shots: <span id="shots">0</span></div>
         <div>Destroyed: <span id="destroyed">0</span></div>
         <div>On screen: <span id="on-screen">0</span></div>
       </section>
+
+      <dialog id="menu-dialog">
+        <button type="button" id="close">✖</button>
+
+        <nav>
+          <button type="button" id="new-game">New Game</button>
+          <button type="button" id="leaderboard" disabled>Leaderboard</button>
+          <button type="button" id="terms-of-use" disabled>Terms of Use</button>
+          <button type="button" id="privacy-policy" disabled>Privacy Policy</button>
+          <button type="button" id="hot-seat" disabled>Hot Seat</button>
+          <button type="button" id="online" disabled>Online</button>
+        </nav>
+      </dialog>
     </main>
 
     <script src="src/index.js" type="module"></script>
