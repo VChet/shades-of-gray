@@ -17,7 +17,12 @@ export class Game {
     this.previousTime = performance.now();
 
     this.state = "aiming";
-    this.destroyedBalls = 0;
+    this.statsDom = {
+      shots: document.querySelector("#shots"),
+      destroyed: document.querySelector("#destroyed"),
+      onScreen: document.querySelector("#on-screen")
+    };
+    this.stats = { shots: 0, destroyed: 0 };
 
     this.cannon = new Cannon(ctx);
 
@@ -34,6 +39,12 @@ export class Game {
     return INITIAL_SPEED ** 2 / (targetDistance * 2);
   }
 
+  updateStats() {
+    this.statsDom.shots.textContent = this.stats.shots;
+    this.statsDom.destroyed.textContent = this.stats.destroyed;
+    this.statsDom.onScreen.textContent = this.balls.length;
+  }
+
   updateFlyingBall(deltaTime) {
     const ball = this.balls.at(-1);
     ball.setPosition(deltaTime);
@@ -43,7 +54,8 @@ export class Game {
     const hitBall = ball.bounceFromOthers(this.balls);
     if (hitBall?.hit()) {
       this.balls.splice(this.balls.indexOf(hitBall), 1);
-      this.destroyedBalls += 1;
+      this.stats.destroyed += 1;
+      this.updateStats();
     }
 
     ball.setVelocity(this.getFriction(), deltaTime);
@@ -77,7 +89,8 @@ export class Game {
   reset() {
     this.balls = [];
     this.state = "aiming";
-    this.destroyedBalls = 0;
+    this.stats = { shots: 0, destroyed: 0 };
+    this.updateStats();
   }
 
   render() {
@@ -104,6 +117,8 @@ export class Game {
       this.nextBallLevel
     );
     this.balls.push(ball);
+    this.stats.shots += 1;
+    this.updateStats();
 
     this.nextBallLevel = randomBallLevel();
     this.cannon.setNextBall(this.nextBallLevel);
