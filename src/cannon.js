@@ -2,13 +2,13 @@ import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
 import { getBallColor } from "./helpers/color.js";
 
 const RADIUS = 5;
-const Y_OFFSET = 16;
+const Y_OFFSET = 5;
 
 const ARROW_LENGTH = 25;
 const ARROW_WIDTH = RADIUS;
 const ARROW_SPEED = Math.PI;
 
-const SAFE_MARGIN = RADIUS + ARROW_LENGTH;
+const SAFE_MARGIN = ARROW_LENGTH;
 const MIN_SHOOT_ANGLE = 5 * Math.PI / 180;
 
 export class Cannon {
@@ -47,13 +47,14 @@ export class Cannon {
   }
 
   getSafeRadius() {
-    return this.radius + SAFE_MARGIN;
+    return SAFE_MARGIN;
   }
 
   render() {
     const { ctx } = this;
     const color = getBallColor(this.ballLevel);
 
+    // Ball
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 
@@ -61,7 +62,7 @@ export class Cannon {
     ctx.fill();
 
     ctx.save();
-
+    // Arrow
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
 
@@ -75,5 +76,10 @@ export class Cannon {
     ctx.fill();
 
     ctx.restore();
+    // Safe zone
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.getSafeRadius(), 0, Math.PI * 2);
+    ctx.strokeStyle = "#222";
+    ctx.stroke();
   }
 }

@@ -76,7 +76,7 @@ export class Ball {
     }
 
     const maxRadius = Math.min(left, right, top, bottom, cannonDistance, otherBallDistance);
-    return maxRadius > 0 ? maxRadius : this.radius;
+    return maxRadius > 0 ? maxRadius : null;
   }
 
   bounceFromOthers(balls) {
