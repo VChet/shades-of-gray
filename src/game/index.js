@@ -40,7 +40,10 @@ export class Game {
     }
 
     this.canvas.addEventListener("pointerdown", this.shoot);
+    // Save game state on page close
     window.addEventListener("pagehide", this.saveSnapshot);
+    // Pause game on tab change
+    document.addEventListener("visibilitychange", () => { document.hidden ? this.pause() : this.resume(); });
   }
 
   getFriction() {
@@ -162,6 +165,7 @@ export class Game {
   }
 
   resume() {
+    this.previousTime = performance.now();
     this.paused = false;
   }
 
