@@ -15,12 +15,16 @@ export class Cannon {
   constructor(ctx) {
     this.ctx = ctx;
 
-    this.x = GAME_WIDTH / 2;
-    this.y = GAME_HEIGHT - Y_OFFSET;
+    this.resize();
     this.radius = RADIUS;
 
     this.angle = -Math.PI / 2;
     this.direction = 1;
+  }
+
+  resize() {
+    this.x = GAME_WIDTH / 2;
+    this.y = GAME_HEIGHT - Y_OFFSET;
   }
 
   update(deltaTime) {

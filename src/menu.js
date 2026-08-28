@@ -30,7 +30,7 @@ export function createMenu(game) {
 
   const newGameButton = menuDialog.querySelector("#new-game");
   newGameButton.addEventListener("click", () => {
-    game.reset();
+    game.startNewGame();
     menuDialog.close();
   });
   // Leaderboard

@@ -1,36 +1,37 @@
-export const GAME_WIDTH = 240;
 export const GAME_HEIGHT = 320;
+export const GAME_WIDTH = GAME_HEIGHT * 9 / 20;
 
 export function createCanvas() {
   const canvas = document.querySelector("#game");
   const ctx = canvas.getContext("2d");
 
-  function resize() {
-    const scale = Math.min(
-      window.innerWidth / GAME_WIDTH,
-      window.innerHeight / GAME_HEIGHT
-    );
+  canvas.resize = (width, height) => {
+    if (!width || !height) {
+      const scale = Math.min(
+        window.innerWidth / GAME_WIDTH,
+        window.innerHeight / GAME_HEIGHT
+      );
+      width = GAME_WIDTH * scale;
+      height = GAME_HEIGHT * scale;
+    }
 
+    const scale = width / GAME_WIDTH;
     const pixelRatio = window.devicePixelRatio;
 
-    canvas.width = GAME_WIDTH * scale * pixelRatio;
-    canvas.height = GAME_HEIGHT * scale * pixelRatio;
+    canvas.width = width * pixelRatio;
+    canvas.height = height * pixelRatio;
 
-    canvas.style.width = `${GAME_WIDTH * scale}px`;
-    canvas.style.height = `${GAME_HEIGHT * scale}px`;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
 
     ctx.setTransform(
       scale * pixelRatio, 0,
       0, scale * pixelRatio,
       0, 0
     );
-  }
-
-  window.addEventListener("resize", resize);
-  resize();
-
-  return {
-    canvas,
-    ctx
   };
+
+  canvas.resize();
+
+  return { canvas, ctx };
 }

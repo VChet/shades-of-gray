@@ -14,27 +14,28 @@ function randomBallLevel() {
 }
 
 export class Game {
+  paused = false;
+  state = "aiming";
+  last = 0;
+  score = 0;
+  balls = [];
+
   constructor(canvas, ctx) {
     this.canvas = canvas;
     this.ctx = ctx;
     this.previousTime = performance.now();
 
-    this.paused = false;
-    this.state = "aiming";
     this.statsDom = {
       score: document.querySelector("#score"),
       last: document.querySelector("#last"),
       best: document.querySelector("#best")
     };
-    this.last = 0;
-    this.score = 0;
     this.updateStats();
 
     this.cannon = new Cannon(ctx);
-    this.balls = [];
 
-    const restored = this.restoreSnapshot();
-    if (!restored) {
+    const snapshot = this.restoreSnapshot();
+    if (!snapshot) {
       this.nextBallLevel = randomBallLevel();
       this.cannon.setNextBall(this.nextBallLevel);
     }
@@ -42,6 +43,8 @@ export class Game {
     this.canvas.addEventListener("pointerdown", this.shoot);
     // Save game state on page close
     window.addEventListener("pagehide", this.saveSnapshot);
+    // Update game state on window resize
+    window.addEventListener("resize", this.resize);
     // Pause game on tab change
     document.addEventListener("visibilitychange", () => { document.hidden ? this.pause() : this.resume(); });
   }
@@ -110,18 +113,26 @@ export class Game {
     else if (this.state === "growing") this.updateGrowingBall(deltaTime);
   }
 
+  resize = (width, height) => {
+    this.canvas.resize(width, height);
+    this.cannon.resize();
+  };
+
+  startNewGame() {
+    this.resize();
+    this.balls = [];
+    this.state = "aiming";
+    this.score = 0;
+    this.nextBallLevel = randomBallLevel();
+    this.cannon.setNextBall(this.nextBallLevel);
+    this.updateStats();
+  }
+
   gameOver() {
     playSound("gameOver");
     addRecord(this.score);
     this.last = this.score;
-    this.reset();
-  }
-
-  reset() {
-    this.balls = [];
-    this.state = "aiming";
-    this.score = 0;
-    this.updateStats();
+    this.startNewGame();
   }
 
   render() {
@@ -176,6 +187,8 @@ export class Game {
     }
 
     writeValue("game-state", {
+      width: this.canvas.clientWidth,
+      height: this.canvas.clientHeight,
       score: this.score,
       state: this.state,
       nextBallLevel: this.nextBallLevel,
@@ -186,6 +199,8 @@ export class Game {
   restoreSnapshot() {
     const snapshot = readValue("game-state", null);
     if (!snapshot) return false;
+
+    this.resize(snapshot.width, snapshot.height);
 
     this.score = snapshot.score;
     this.state = snapshot.state;
