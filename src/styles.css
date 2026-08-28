@@ -13,6 +13,7 @@ body {
   margin: 0;
   overflow: hidden;
   background: var(--aside);
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   display: flex;
