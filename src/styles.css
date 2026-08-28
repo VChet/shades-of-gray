@@ -76,7 +76,7 @@ button {
   white-space: nowrap;
   cursor: pointer;
   outline: none;
-  background: 0 0;
+  background: transparent;
   border: none;
   transition: color 0.3s;
   nav & {
@@ -88,6 +88,26 @@ button {
   &:disabled {
     pointer-events: none;
     opacity: 0.5;
+  }
+}
+a.button {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  color: inherit;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  outline: none;
+  background: transparent;
+  transition: color 0.3s;
+  nav & {
+    padding-block: 0.75rem;
+  }
+  &:hover, &:focus-visible {
+    color: var(--accent);
   }
 }
 label {
