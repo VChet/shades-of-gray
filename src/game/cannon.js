@@ -1,4 +1,3 @@
-import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
 import { getBallColor } from "./helpers/color.js";
 
 const RADIUS = 5;
@@ -15,16 +14,16 @@ export class Cannon {
   constructor(ctx) {
     this.ctx = ctx;
 
-    this.resize();
+    this.reposition();
     this.radius = RADIUS;
 
     this.angle = -Math.PI / 2;
     this.direction = 1;
   }
 
-  resize() {
-    this.x = GAME_WIDTH / 2;
-    this.y = GAME_HEIGHT - Y_OFFSET;
+  reposition() {
+    this.x = this.ctx.canvas.viewport.width / 2;
+    this.y = this.ctx.canvas.viewport.height - Y_OFFSET;
   }
 
   update(deltaTime) {

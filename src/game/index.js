@@ -1,6 +1,5 @@
 import { Ball } from "./ball.js";
 import { Cannon } from "./cannon.js";
-import { GAME_WIDTH, GAME_HEIGHT } from "./canvas.js";
 import { readValue, removeValue, writeValue } from "./helpers/storage.js";
 import { addRecord, getBestScore } from "./leaderboard.js";
 import { playSound } from "./sound.js";
@@ -44,14 +43,14 @@ export class Game {
     // Save game state on page close
     window.addEventListener("pagehide", this.saveSnapshot);
     // Update game state on window resize
-    window.addEventListener("resize", this.resize);
+    window.addEventListener("resize", this.fitToWindow);
     // Pause game on tab change
     document.addEventListener("visibilitychange", () => { document.hidden ? this.pause() : this.resume(); });
   }
 
   getFriction() {
     const distanceToTop = this.cannon.y - RADIUS;
-    const distanceToCenter = GAME_HEIGHT / 2 - RADIUS;
+    const distanceToCenter = this.canvas.viewport.height / 2 - RADIUS;
     const targetDistance = distanceToTop + distanceToCenter;
     return INITIAL_SPEED ** 2 / (targetDistance * 2);
   }
@@ -65,8 +64,8 @@ export class Game {
   updateFlyingBall(deltaTime) {
     const ball = this.balls.at(-1);
     ball.setPosition(deltaTime);
-    if (ball.isOutOfBounds(GAME_HEIGHT)) return this.gameOver();
-    const isBounced = ball.bounce(GAME_WIDTH);
+    if (ball.isOutOfBounds(this.canvas.viewport.height)) return this.gameOver();
+    const isBounced = ball.bounce(this.canvas.viewport.width);
     if (isBounced) playSound("bounce");
 
     const hitBall = ball.bounceFromOthers(this.balls);
@@ -90,7 +89,7 @@ export class Game {
 
   updateGrowingBall(deltaTime) {
     const ball = this.balls.at(-1);
-    const maxRadius = ball.getMaxRadius(this.balls, GAME_WIDTH, GAME_HEIGHT, this.cannon);
+    const maxRadius = ball.getMaxRadius(this.balls, this.canvas.viewport.width, this.canvas.viewport.height, this.cannon);
     if (maxRadius === null) {
       this.balls.pop();
       this.state = "aiming";
@@ -113,13 +112,15 @@ export class Game {
     else if (this.state === "growing") this.updateGrowingBall(deltaTime);
   }
 
-  resize = (width, height) => {
-    this.canvas.resize(width, height);
-    this.cannon.resize();
+  fitToWindow = () => {
+    this.canvas.fitToWindow();
+    this.cannon.reposition();
   };
 
   startNewGame() {
-    this.resize();
+    this.canvas.setOrientation();
+    this.cannon.reposition();
+
     this.balls = [];
     this.state = "aiming";
     this.score = 0;
@@ -139,7 +140,7 @@ export class Game {
     const { ctx } = this;
 
     ctx.fillStyle = "#111";
-    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.fillRect(0, 0, this.canvas.viewport.width, this.canvas.viewport.height);
 
     this.cannon.render();
     for (const ball of this.balls) ball.render();
@@ -187,8 +188,7 @@ export class Game {
     }
 
     writeValue("game-state", {
-      width: this.canvas.clientWidth,
-      height: this.canvas.clientHeight,
+      viewport: this.canvas.viewport,
       score: this.score,
       state: this.state,
       nextBallLevel: this.nextBallLevel,
@@ -200,7 +200,8 @@ export class Game {
     const snapshot = readValue("game-state", null);
     if (!snapshot) return false;
 
-    this.resize(snapshot.width, snapshot.height);
+    this.canvas.setViewport(snapshot.viewport.width, snapshot.viewport.height);
+    this.cannon.reposition();
 
     this.score = snapshot.score;
     this.state = snapshot.state;
