@@ -40,11 +40,11 @@ export class Game {
     }
 
     this.canvas.addEventListener("pointerdown", this.shoot);
-    // Save game state on page close
-    window.addEventListener("pagehide", this.saveSnapshot);
-    // Update game state on window resize
+    // Keep the game viewport scaled to the available window size
     window.addEventListener("resize", this.fitToWindow);
-    // Pause game on tab change
+    // Save the current game state before leaving the page
+    window.addEventListener("beforeunload", this.saveSnapshot);
+    // Pause the game when the tab becomes hidden
     document.addEventListener("visibilitychange", () => { document.hidden ? this.pause() : this.resume(); });
   }
 
