@@ -11,8 +11,8 @@ export function createCanvas() {
     const { width, height } = canvas.viewport;
 
     const scale = Math.min(
-      window.innerWidth / width,
-      window.innerHeight / height
+      visualViewport.width / width,
+      visualViewport.height / height
     );
 
     const pixelRatio = window.devicePixelRatio;
@@ -37,7 +37,7 @@ export function createCanvas() {
   };
 
   canvas.setOrientation = () => {
-    const portrait = window.innerHeight >= window.innerWidth;
+    const portrait = visualViewport.height >= visualViewport.width;
     canvas.setViewport(
       portrait ? GAME_WIDTH : GAME_HEIGHT,
       portrait ? GAME_HEIGHT : GAME_WIDTH
