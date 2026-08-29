@@ -1,16 +1,12 @@
 import { Ball } from "./ball.js";
 import { Cannon } from "./cannon.js";
+import { randomBallLevel } from "./helpers/level.js";
 import { readValue, removeValue, writeValue } from "./helpers/storage.js";
 import { addRecord, getBestScore } from "./leaderboard.js";
 import { playSound } from "./sound.js";
 
 const RADIUS = 5;
 const INITIAL_SPEED = 300;
-const MAX_BALL_LEVEL = 5;
-
-function randomBallLevel() {
-  return Math.floor(Math.random() * MAX_BALL_LEVEL);
-}
 
 export class Game {
   paused = false;
