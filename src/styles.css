@@ -168,7 +168,9 @@ label {
   }
 }
 #leaderboard-list {
+  font-weight: 300;
   font-variant-numeric: tabular-nums;
+  text-align: center;
   &:has(.empty) {
     padding: 1rem;
     text-align: center;
