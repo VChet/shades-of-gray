@@ -167,3 +167,11 @@ label {
     }
   }
 }
+#leaderboard-list {
+  font-variant-numeric: tabular-nums;
+  &:has(.empty) {
+    padding: 1rem;
+    text-align: center;
+    list-style: none;
+  }
+}

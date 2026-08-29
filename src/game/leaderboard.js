@@ -35,10 +35,21 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 export function renderLeaderboard(element) {
   const records = getLeaderboard();
 
+  if (!records.length) {
+    const empty = document.createElement("li");
+    empty.textContent = "No records yet";
+    empty.classList.add("empty");
+    element.replaceChildren(empty);
+    return;
+  }
+
+  const maxScoreLength = Math.max(...records.map((record) => String(record.score).length), 0);
+
   const children = records.map((record) => {
     const item = document.createElement("li");
+    const score = String(record.score).padStart(maxScoreLength, "0");
     const date = dateFormatter.format(new Date(record.date));
-    item.textContent = `${record.score} · ${date}`;
+    item.textContent = `${score} · ${date}`;
     return item;
   });
 
