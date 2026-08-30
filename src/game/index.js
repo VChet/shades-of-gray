@@ -139,8 +139,8 @@ export class Game {
     this.updateStats();
   }
 
-  gameOver() {
-    playSound("gameOver");
+  gameOver({ silent = false } = {}) {
+    if (!silent) playSound("gameOver");
     addRecord(this.score);
     this.last = this.score;
     this.startNewGame();
