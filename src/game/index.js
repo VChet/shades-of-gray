@@ -7,6 +7,7 @@ import { playSound } from "./sound.js";
 
 const RADIUS = 5;
 const INITIAL_SPEED = 300;
+const BOUNCE_FRICTION = 0.97;
 
 export class Game {
   paused = false;
@@ -47,8 +48,12 @@ export class Game {
   getFriction() {
     const distanceToTop = this.cannon.y - RADIUS;
     const distanceToCenter = this.canvas.viewport.height / 2 - RADIUS;
-    const targetDistance = distanceToTop + distanceToCenter;
-    return INITIAL_SPEED ** 2 / (targetDistance * 2);
+
+    const initialSpeedSq = INITIAL_SPEED ** 2;
+    const bounceSpeedSq = BOUNCE_FRICTION ** 2;
+    const effectiveDistance = distanceToTop + distanceToCenter / bounceSpeedSq;
+
+    return initialSpeedSq / (2 * effectiveDistance);
   }
 
   updateStats() {
@@ -62,10 +67,17 @@ export class Game {
     ball.setPosition(deltaTime);
     if (ball.isOutOfBounds(this.canvas.viewport.height)) return this.gameOver();
     const isBounced = ball.bounce(this.canvas.viewport.width);
-    if (isBounced) playSound("bounce");
+    if (isBounced) {
+      ball.vx *= BOUNCE_FRICTION;
+      ball.vy *= BOUNCE_FRICTION;
+      playSound("bounce");
+    }
 
     const hitBall = ball.bounceFromOthers(this.balls);
     if (hitBall) {
+      ball.vx *= BOUNCE_FRICTION;
+      ball.vy *= BOUNCE_FRICTION;
+
       this.score += 1;
       this.updateStats();
       const isDestroyed = hitBall.hit();
