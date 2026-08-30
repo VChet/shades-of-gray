@@ -101,6 +101,8 @@ export class Game {
     if (maxRadius === null) {
       this.balls.pop();
       this.state = "aiming";
+      this.score += 1;
+      this.updateStats();
       playSound("cannonZone");
       return;
     }
